@@ -49,30 +49,48 @@ Button:Visible(false) -- Make the button invisible < false >
 Toggle:Visible(true) -- Make the toggle visible < true >
 ```
 
-## Set Toggle
+## Set Section
+set section values
+
 ```lua
-local Toggle = Tab:AddToggle({
-  Name = "Toggle",
-  Description = "This is a Toggle",
-  Callback = function(Value)
-    
-  end
-})
+local Section = Tab:AddSection("Section")
+
+-- New Text
+
+Section:Set("New Section Text")
+```
+
+## Set Button
+set button values
+
+```lua
+local Button = Tab:AddButton({"Button", function(Value)
+  
+end})
+
+-- New Function/Callback
+
+Toggle:Set(function()
+  print("Click!")
+end) -- function
+
+```
+
+## Set Toggle
+Set toggle values
+
+```lua
+local Toggle = Tab:AddToggle({"Toggle", false, function(Value)
+  
+end})
 
 -- New Value
 
 Toggle:Set(false) -- boolean
 
--- New Name + Description
-
-Toggle:Set("New toggle Name") -- string
-
-Toggle:Set("New toggle Name", "New toggle Description") -- string
-
--- New Function
+-- New Function/Callback
 
 Toggle:Set(function(Value)
   print(Value)
 end) -- function
-
 ```
