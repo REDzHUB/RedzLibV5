@@ -57,7 +57,20 @@ local Section = Tab:AddSection("Section")
 
 -- New Text
 
-Section:Set("New Section Text")
+Section:Set("New Section Text") -- string
+```
+
+## Set Paragraph
+set paragraph values
+
+```lua
+local Paragraph = Tab:AddParagraph({"Paragraph", "This is a Paragraph"})
+
+-- Set Title + Text
+Paragraph:Set("New Title", "New Text") -- string, string
+
+-- Set Only Text
+Paragraph:Set("New Text") -- string
 ```
 
 ## Set Button
