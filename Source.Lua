@@ -350,6 +350,7 @@ local function ButtonFrame(Instance, Title, Description, HolderSize)
       LabelHolder.AnchorPoint = Vector2.new(0, 0)
     else
       DescL.Visible = false
+      DescL.Text = ""
       LabelHolder.Position = UDim2.new(0, 10, 0.5)
       LabelHolder.AnchorPoint = Vector2.new(0, 0.5)
     end
