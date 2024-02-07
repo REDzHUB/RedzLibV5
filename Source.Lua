@@ -999,7 +999,7 @@ function redzlib:MakeWindow(Configs)
       local TDesc = Configs.Description or ""
       local Default = Configs[2] or Configs.Default or false
       local Callback = Configs[3] or Configs.Callback or function()end
-      local Flag = Configs[4] or Configs.Flag or "Testando"
+      local Flag = Configs[4] or Configs.Flag or false
       local MultCallback = {}
       
       local Button, LabelFunc = ButtonFrame(Container, TName, TDesc, UDim2.new(1, -38))
