@@ -915,6 +915,12 @@ function redzlib:MakeWindow(Configs)
       local Frame, LabelFunc = ButtonFrame(Container, PName, PDesc, UDim2.new(1, -20))
       
       local Paragraph = {}
+      function Paragraph:SetTitle(Val)
+        LabelFunc:SetTitle(Val)
+      end
+      function Paragraph:SetDesc(Val)
+        LabelFunc:SetDesc(Val)
+      end
       function Paragraph:Set(Val1, Val2)
         if Val1 and Val2 then
           LabelFunc:SetTitle(Val1)
