@@ -48,7 +48,7 @@ local redzlib = {
     }
   },
   Info = {
-    Version = "1.0.0",
+    Version = "1.0.1",
     PlaceName = MarketplaceService:GetProductInfo(game.PlaceId).Name
   },
   Save = {
@@ -1115,6 +1115,9 @@ function redzlib:MakeWindow(Configs)
         elseif type(Val1) == "string" then
           LabelFunc:SetTitle(Val1, false ,true)
         elseif type(Val1) == "boolean" then
+          if WaitClick then
+            repeat task.wait() until not WaitClick
+          end
           task.spawn(SetToggle, Val1)
         elseif type(Val1) == "function" then
           Callback = Val1
@@ -1658,8 +1661,28 @@ function redzlib:MakeWindow(Configs)
         BackgroundTransparency = 1
       })
       
-      local TextBox = {}
+      local function Input()
+        local Text = TextBoxInput.Text
+        if Text:gsub(" ", ""):len() < 1 then return end
+        
+        task.spawn(Callback, Text)
+        table.foreach(MultCallback, function(func)
+          if type(func) == "function" then
+            task.spawn(func, Text)
+          end
+        end)
+      end
       
+      TextBoxInput.FocusLost:Connect(Input)
+      
+      local TextBox = {}
+      function TextBox:Destroy()
+        Button:Destroy()
+      end
+      function TextBox:Visible(Bool)
+        if Bool == nil then Button.Visible = not Button.Visible return end
+        Button.Visible = Bool
+      end
       return TextBox
     end
     function Tab:AddDiscordInvite(Configs)
