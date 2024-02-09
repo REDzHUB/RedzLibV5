@@ -48,7 +48,7 @@ local redzlib = {
     }
   },
   Info = {
-    Version = "1.0.1",
+    Version = "1.0.0",
     PlaceName = MarketplaceService:GetProductInfo(game.PlaceId).Name
   },
   Save = {
@@ -1113,9 +1113,9 @@ function redzlib:MakeWindow(Configs)
           LabelFunc:SetTitle(Val1)
           LabelFunc:SetDesc(Val2)
         elseif type(Val1) == "string" then
-          LabelFunc:SetTitle(Val1, false ,true)
+          LabelFunc:SetTitle(Val1, false, true)
         elseif type(Val1) == "boolean" then
-          if WaitClick then
+          if WaitClick and Val2 then
             repeat task.wait() until not WaitClick
           end
           task.spawn(SetToggle, Val1)
