@@ -969,7 +969,7 @@ function redzlib:MakeWindow(Configs)
         LabelFunc:SetDesc(Val)
       end
       function Paragraph:Set(Val1, Val2)
-        if Val1 and Val2 then
+        if type(Val1) == "string" and type(Val2) == "string" then
           LabelFunc:SetTitle(Val1)
           LabelFunc:SetDesc(Val2)
         else
@@ -1015,7 +1015,7 @@ function redzlib:MakeWindow(Configs)
         table.insert(MultCallback, func)
       end
       function Button:Set(Val1, Val2)
-        if Val1 and Val2 then
+        if type(Val1) == "string" and type(Val2) == "string" then
           LabelFunc:SetTitle(Val1)
           LabelFunc:SetDesc(Val2)
         elseif type(Val1) == "string" then
