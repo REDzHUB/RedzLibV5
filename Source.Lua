@@ -1109,7 +1109,7 @@ function redzlib:MakeWindow(Configs)
         task.spawn(func, Default)
       end
       function Toggle:Set(Val1, Val2)
-        if Val1 and Val2 then
+        if type(Val1) == "string" and type(Val2) == "string" then
           LabelFunc:SetTitle(Val1)
           LabelFunc:SetDesc(Val2)
         elseif type(Val1) == "string" then
