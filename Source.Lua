@@ -280,7 +280,15 @@ AddEle("Gradient", function(parent, props, ...)
   return New
 end)
 
+local function GetColor(str)
+  str = str:gsub("<color=(", "<font color='rgb(")
+  str = str:gsub(")>", ")'>")
+  return str
+end
+
 local function ButtonFrame(Instance, Title, Description, HolderSize)
+  Title, Description = GetColor(Title), GetColor(Description)
+  
   local TitleL = InsertTheme(Create("TextLabel", {
     Font = Enum.Font.GothamMedium,
     TextColor3 = Theme["Color Text"],
