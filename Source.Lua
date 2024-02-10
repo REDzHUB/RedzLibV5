@@ -1268,7 +1268,7 @@ function redzlib:MakeWindow(Configs)
       end
       
       local Default = (type(DDefault) == "table" and DDefault) or {DDefault}
-      local Options, MultSelected, Selected, InputOn = {}, Default, Default
+      local Options, MultSelected, Selected = {}, Default, Default
       
       local function VerifyOption(Option)
         for _,Val in pairs(Options) do
@@ -1348,25 +1348,8 @@ function redzlib:MakeWindow(Configs)
         
         if table.find(Selected, OptionName) then Active()end
         
-        Option.MouseEnter:Connect(function()
-          if InputOn then
-            Active()
-          end
-        end)
-        
-        Option.MouseButton1Down:Connect(function()
-          InputOn = true
-        end)
-        
-        Option.InputBegan:Connect(function(Input)
-          if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
-            StartPos = Instance.Position
-            DragStart = Input.Position
-            
-            while UserInputService:IsMouseButtonPressed(Enum.UserInputType.MouseButton1) do RunService.Heartbeat:Wait()
-            end
-            InputOn = false
-          end
+        Option.Activated:Connect(function()
+          Active()
         end)
         
         table.insert(Options, {
