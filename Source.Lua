@@ -1217,6 +1217,7 @@ function redzlib:MakeWindow(Configs)
         WaitClick = true
         CreateTween({Arrow, "Rotation", 0, 0.2})
         CreateTween({DropFrame, "Size", UDim2.new(0, 152, 0, 0), 0.2, true})
+        CreateTween({Arrow, "ImageColor3", Color3.fromRGB(255, 255, 255), 0.2})
         Arrow.Image = "rbxassetid://10709791523"
         NoClickFrame.Visible = false
         WaitClick = false
@@ -1245,11 +1246,13 @@ function redzlib:MakeWindow(Configs)
         WaitClick = true
         if NoClickFrame.Visible then
           Arrow.Image = "rbxassetid://10709791523"
+          CreateTween({Arrow, "ImageColor3", Color3.fromRGB(255, 255, 255), 0.2})
           CreateTween({DropFrame, "Size", UDim2.new(0, 152, 0, 0), 0.2, true})
           NoClickFrame.Visible = false
         else
           NoClickFrame.Visible = true
           Arrow.Image = "rbxassetid://10709790948"
+          CreateTween({Arrow, "ImageColor3", Theme["Color Theme"], 0.2})
           CreateTween({DropFrame, "Size", GetFrameSize(), 0.2, true})
         end
         WaitClick = false
@@ -1555,8 +1558,9 @@ function redzlib:MakeWindow(Configs)
       
       LabelVal:GetPropertyChangedSignal("Text"):Connect(function()
         UIScale.Scale = 0.3
-        CreateTween({UIScale, "Scale", 1, 0.25})
-        CreateTween({LabelVal, "Rotation", math.random(-1, 1) * 20, 0.15, true})
+        CreateTween({UIScale, "Scale", 1.2, 0.1})
+        CreateTween({LabelVal, "Rotation", math.random(-1, 1) * 5, 0.15, true})
+        CreateTween({UIScale, "Scale", 1, 0.2})
         CreateTween({LabelVal, "Rotation", 0, 0.1})
       end)
       
@@ -1657,6 +1661,13 @@ function redzlib:MakeWindow(Configs)
       end
       
       TextBoxInput.FocusLost:Connect(Input)
+      
+      TextBoxInput.FocusLost:Connect(function()
+        CreateTween({Pencil, "ImageColor3", Color3.fromRGB(255, 255, 255), 0.2})
+      end)
+      TextBoxInput.Focused:Connect(function()
+        CreateTween({Pencil, "ImageColor3", Theme["Color Theme"], 0.2})
+      end)
       
       local TextBox = {}
       function TextBox:Destroy()
