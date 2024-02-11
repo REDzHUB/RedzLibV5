@@ -3,10 +3,11 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
-local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local PlayerMouse = Player:GetMouse()
+
+local CoreGui = Player.PlayerGui-- game:GetService("CoreGui")
 
 local redzlib = {
   Themes = {
@@ -602,8 +603,8 @@ function redzlib:MakeWindow(Configs)
     AnchorPoint = Vector2.new(1, 0.5),
     BackgroundTransparency = 1,
     Image = "rbxassetid://10747384394",
-    Name = "Close",
-    AutoButtonColor = false
+    AutoButtonColor = false,
+    Name = "Close"
   })
   
   local MinimizeButton = SetProps(CloseButton:Clone(), {
@@ -693,6 +694,9 @@ function redzlib:MakeWindow(Configs)
   end
   function Window:Dialog(Configs)
     if MainFrame:FindFirstChild("Dialog") then return end
+    if Minimized then
+      Window:MinimizeBtn()
+    end
     
     local DTitle = Configs[1] or Configs.Title or "Dialog"
     local DText = Configs[2] or Configs.Text or "This is a Dialog"
@@ -1381,6 +1385,7 @@ function redzlib:MakeWindow(Configs)
       Button.Activated:Connect(Minimize)
       NoClickFrame.MouseButton1Down:Connect(Disable)
       NoClickFrame.MouseButton1Click:Connect(Disable)
+      MainFrame:GetPropertyChangedSignal("Visible"):Connect(Disable)
       SelectedFrame:GetPropertyChangedSignal("AbsolutePosition"):Connect(CalculatePos)
       
       Button.Activated:Connect(CalculateSize)
