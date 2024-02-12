@@ -3,11 +3,10 @@ local UserInputService = game:GetService("UserInputService")
 local TweenService = game:GetService("TweenService")
 local HttpService = game:GetService("HttpService")
 local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
 local Players = game:GetService("Players")
 local Player = Players.LocalPlayer
 local PlayerMouse = Player:GetMouse()
-
-local CoreGui = Player.PlayerGui-- game:GetService("CoreGui")
 
 local redzlib = {
   Themes = {
@@ -657,13 +656,13 @@ function redzlib:MakeWindow(Configs)
     MainFrame.Visible = not MainFrame.Visible
   end
   function Window:AddMinimizeButton(Configs)
-    local Button = Create("ImageButton", ScreenGui, {
-      Size = UDim2.fromOffset(40, 40),
+    local Button = MakeDrag(Create("ImageButton", ScreenGui, {
+      Size = UDim2.fromOffset(35, 35),
       Position = UDim2.fromScale(0.15, 0.15),
       BackgroundTransparency = 1,
       BackgroundColor3 = Theme["Color Hub 2"],
       AutoButtonColor = false
-    })
+    }))
     
     local Stroke, Corner
     if Configs.Corner then
