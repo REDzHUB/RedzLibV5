@@ -119,7 +119,12 @@ local function TranslateTo(Message, Target)
   return Translate(Message, Target:lower(), "auto").text
 end
 
+local function SetLang(NewLang)
+  CurrentLang = NewLang
+end
+
 return ({
+  SetLang = SetLang,
   Translate = Translate,
   TranslateTo = TranslateTo,
   TranslateFrom = TranslateFrom
