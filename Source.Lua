@@ -48,7 +48,7 @@ local redzlib = {
     }
   },
   Info = {
-    Version = "1.0.0",
+    Version = "1.0.1",
     PlaceName = MarketplaceService:GetProductInfo(game.PlaceId).Name
   },
   Save = {
@@ -430,24 +430,16 @@ function redzlib:MakeWindow(Configs)
   local Flags = redzlib.Flags
   
   if SaveCfg and type(SaveCfg) == "string" then SaveCfg = string.gsub(SaveCfg, "/", "|")end
-  if SaveRejoin and type(SaveRejoin) == "string" then SaveRejoin = string.gsub(SaveRejoin, "/", "|")end
   
   local LastTick = tick()
   local function SaveFile(Name, Value)
     if writefile then
-      if SaveRejoin and type(SaveRejoin) == "string" then
-        Flags[Name] = Value
-        
-        local encode = HttpService:JSONEncode({
-          LastTick = LastTick,
-          Flags = Flags
-        })
-        writefile(SaveRejoin, encode)
-      elseif SaveCfg and type(SaveCfg) == "string" then
+      if SaveCfg and type(SaveCfg) == "string" then
         Flags[Name] = Value
         
         local encode = HttpService:JSONEncode(Flags)
-        writefile(SaveCfg, encode)
+        
+        pcall(writefile, SaveCfg, encode)
       end
     end
   end
@@ -455,10 +447,13 @@ function redzlib:MakeWindow(Configs)
   local function LoadFile()
     if SaveCfg and type(SaveCfg) == "string" then
       if readfile and isfile and isfile(SaveCfg) then
-        local decode = HttpService:JSONDecode(readfile(SaveCfg))
-        
-        if decode and type(decode) == "table" then
-          Flags = decode
+        local Error, Src = pcall(readfile, SaveCfg)
+        if Error and type(Src) == "table" then
+          Src = HttpService:JSONDecode(Src)
+          
+          if type(Src) == "table" then
+            Flags = Src
+          end
         end
       end
     end
