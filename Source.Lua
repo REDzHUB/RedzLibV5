@@ -448,7 +448,7 @@ function redzlib:MakeWindow(Configs)
     if SaveCfg and type(SaveCfg) == "string" then
       if readfile and isfile and isfile(SaveCfg) then
         local Error, Src = pcall(readfile, SaveCfg)
-        if Error and type(Src) == "table" then
+        if Error and type(Src) == "string" then
           Src = HttpService:JSONDecode(Src)
           
           if type(Src) == "table" then
