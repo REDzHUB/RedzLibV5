@@ -424,7 +424,8 @@ function redzlib:SetTheme(NewTheme)
 end
 
 function redzlib:SetScale(NewScale)
-  ScreenGui.Scale.Scale = ViewportSize.Y / math.clamp(NewScale, 300, 2000)
+  NewScale = ViewportSize.Y / math.clamp(NewScale, 300, 2000)
+  UIScale, ScreenGui.Scale.Scale = NewScale, NewScale
 end
 
 function redzlib:MakeWindow(Configs)
