@@ -116,7 +116,8 @@ local ScreenGui = Create("ScreenGui", CoreGui, {
   Name = "redz Library V5",
 }, {
   Create("UIScale", {
-    Scale = UIScale
+    Scale = UIScale,
+    Name = "Scale"
   })
 })
 
@@ -420,6 +421,10 @@ function redzlib:SetTheme(NewTheme)
       Val.Instance[GetColor(Val.Instance)] = Theme["Color Theme"]
     end
   end)
+end
+
+function redzlib:SetScale(NewScale)
+  ScreenGui.Scale.Scale = ViewportSize.Y / math.clamp(NewScale, 300, 2000)
 end
 
 function redzlib:MakeWindow(Configs)
