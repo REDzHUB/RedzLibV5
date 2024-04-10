@@ -67,49 +67,69 @@ local redzlib = {
 local ViewportSize = workspace.CurrentCamera.ViewportSize
 local UIScale = ViewportSize.Y / 450
 
-local function SetProps(Instance, Props)
-  if Props then
-    table.foreach(Props, function(prop, value)
-      Instance[prop] = value
-    end)
+local SetProps, SetChildren, InsertTheme, Create do
+  InsertTheme = function(Instance, Type)
+    table.insert(redzlib.Instances, {
+      Instance = Instance,
+      Type = Type
+    })
+    return Instance
   end
-  return Instance
-end
-
-local function SetChildren(Instance, Children)
-  if Children then
-    table.foreach(Children, function(_,Child)
-      Child.Parent = Instance
-    end)
-  end
-  return Instance
-end
-
-local function InsertTheme(Instance, Type)
-  table.insert(redzlib.Instances, {
-    Instance = Instance,
-    Type = Type
-  })
-  return Instance
-end
-
-local function Create(...)
-  local args = {...}
-  if type(args) ~= "table" then return end
-  local new = Instance.new(args[1])
-  local Children = {}
   
-  if type(args[2]) == "table" then
-    SetProps(new, args[2])
-    SetChildren(new, args[3])
-    Children = args[3] or {}
-  elseif typeof(args[2]) == "Instance" then
-    new.Parent = args[2]
-    SetProps(new, args[3])
-    SetChildren(new, args[4])
-    Children = args[4] or {}
+  SetChildren = function(Instance, Children)
+    if Children then
+      table.foreach(Children, function(_,Child)
+        Child.Parent = Instance
+      end)
+    end
+    return Instance
   end
-  return new
+  
+  SetProps = function(Instance, Props)
+    if Props then
+      table.foreach(Props, function(prop, value)
+        Instance[prop] = value
+      end)
+    end
+    return Instance
+  end
+  
+  Create = function(...)
+    local args = {...}
+    if type(args) ~= "table" then return end
+    local new = Instance.new(args[1])
+    local Children = {}
+    
+    if type(args[2]) == "table" then
+      SetProps(new, args[2])
+      SetChildren(new, args[3])
+      Children = args[3] or {}
+    elseif typeof(args[2]) == "Instance" then
+      new.Parent = args[2]
+      SetProps(new, args[3])
+      SetChildren(new, args[4])
+      Children = args[4] or {}
+    end
+    return new
+  end
+  
+  local function Save(file)
+    if readfile and isfile and isfile(FileName) then
+      local decode = HttpService:JSONDecode(readfile(FileName))
+      
+      if type(decode) == "table" then
+        if rawget(decode, "UISize") then redzlib.Save["UISize"] = decode["UISize"] end
+        if rawget(decode, "TabSize") then redzlib.Save["TabSize"] = decode["TabSize"] end
+        if rawget(decode, "Theme") and VerifyTheme(decode["Theme"]) then redzlib.Save["Theme"] = decode["Theme"] end
+      end
+    end
+  end
+  
+  local success, debug = pcall(Save, "redz library V5.lua")
+  
+  if not success then
+    warn(debug)
+  end
 end
 
 local ScreenGui = Create("ScreenGui", CoreGui, {
@@ -193,20 +213,6 @@ local function VerifyTheme(Theme)
   for name,_ in pairs(redzlib.Themes) do
     if name == Theme then
       return true
-    end
-  end
-end
-
-do
-  local FileName = ("redz library V5.lua")
-  
-  if readfile and isfile and isfile(FileName) then
-    local decode = HttpService:JSONDecode(readfile(FileName) or '["error"]')
-    
-    if decode and typeof(decode) == "table" then
-      if rawget(decode, "UISize") then redzlib.Save["UISize"] = decode["UISize"] end
-      if rawget(decode, "TabSize") then redzlib.Save["TabSize"] = decode["TabSize"] end
-      if rawget(decode, "Theme") and VerifyTheme(decode["Theme"]) then redzlib.Save["Theme"] = decode["Theme"] end
     end
   end
 end
