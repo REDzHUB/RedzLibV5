@@ -201,7 +201,7 @@ do
   local FileName = ("redz library V5.lua")
   
   if readfile and isfile and isfile(FileName) then
-    local decode = HttpService:JSONDecode(readfile(FileName))
+    local decode = HttpService:JSONDecode(readfile(FileName) or '["error"]')
     
     if decode and typeof(decode) == "table" then
       if rawget(decode, "UISize") then redzlib.Save["UISize"] = decode["UISize"] end
