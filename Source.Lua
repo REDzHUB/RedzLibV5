@@ -48,7 +48,7 @@ local redzlib = {
     }
   },
   Info = {
-    Version = "1.0.1",
+    Version = "1.0.2",
     PlaceName = MarketplaceService:GetProductInfo(game.PlaceId).Name
   },
   Save = {
@@ -197,25 +197,19 @@ local function VerifyTheme(Theme)
   end
 end
 
-local function assert(table, name)
-  for ind,_ in pairs(table) do
-    if ind == name then
-      return true
-    end
-  end
-end
-
-local function LoadSettings(FileName)
+do
+  local FileName = ("redz library V5.lua")
+  
   if readfile and isfile and isfile(FileName) then
     local decode = HttpService:JSONDecode(readfile(FileName))
     
     if decode and typeof(decode) == "table" then
-      if assert(decode, "UISize") then redzlib.Save["UISize"] = decode["UISize"]end
-      if assert(decode, "TabSize") then redzlib.Save["TabSize"] = decode["TabSize"]end
-      if assert(decode, "Theme") and VerifyTheme(decode["Theme"]) then redzlib.Save["Theme"] = decode["Theme"]end
+      if rawget(decode, "UISize") then redzlib.Save["UISize"] = decode["UISize"] end
+      if rawget(decode, "TabSize") then redzlib.Save["TabSize"] = decode["TabSize"] end
+      if rawget(decode, "Theme") and VerifyTheme(decode["Theme"]) then redzlib.Save["Theme"] = decode["Theme"] end
     end
   end
-end;LoadSettings("redz library V5.lua")
+end
 
 local function SaveJson(FileName, save)
   if writefile then
@@ -453,8 +447,9 @@ function redzlib:MakeWindow(Configs)
   local function LoadFile()
     if SaveCfg and type(SaveCfg) == "string" then
       if readfile and isfile and isfile(SaveCfg) then
-        local Error, Src = pcall(readfile, SaveCfg)
-        if Error and type(Src) == "string" then
+        local success, Src = pcall(readfile, SaveCfg)
+        
+        if success and type(Src) == "string" then
           Src = HttpService:JSONDecode(Src)
           
           if type(Src) == "table" then
@@ -1068,7 +1063,7 @@ function redzlib:MakeWindow(Configs)
         BackgroundColor3 = Theme["Color Theme"]
       }), "Theme")Make("Corner", Toggle, UDim.new(0.5, 0))
       
-      if Flag and type(Flag) == "string" and assert(Flags, Flag) then
+      if Flag and type(Flag) == "string" and rawget(Flags, Flag) then
         Default = Flags[Flag]
       end
       
@@ -1145,7 +1140,7 @@ function redzlib:MakeWindow(Configs)
       local Flag = Configs[5] or Configs.Flag or false
       local MultCallback = {}
       
-      if Flag and type(Flag) == "string" and assert(Flags, Flag) then
+      if Flag and type(Flag) == "string" and rawget(Flags, Flag) then
         DDefault = Flags[Flag]
       end
       
@@ -1470,7 +1465,7 @@ function redzlib:MakeWindow(Configs)
       local MultCallback = {}
       Min, Max = Min / Increase, Max / Increase
       
-      if Flag and type(Flag) == "string" and assert(Flags, Flag) then
+      if Flag and type(Flag) == "string" and rawget(Flags, Flag) then
         Default = Flags[Flag]
       end
       
