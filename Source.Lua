@@ -113,9 +113,9 @@ local SetProps, SetChildren, InsertTheme, Create do
     return new
   end
   
-  local function Save(FolderName)
-    if readfile and isfile and isfile(FolderName) then
-      local decode = HttpService:JSONDecode(readfile(FolderName))
+  local function Save(file)
+    if readfile and isfile and isfile(file) then
+      local decode = HttpService:JSONDecode(readfile(file))
       
       if type(decode) == "table" then
         if rawget(decode, "UISize") then redzlib.Save["UISize"] = decode["UISize"] end
@@ -217,13 +217,10 @@ local function VerifyTheme(Theme)
   end
 end
 
-local function SaveJson(FolderName, save)
-  if makefolder and isfolder then
-    if not isfolder(FolderName) then makefolder(FolderName) end
-  end
+local function SaveJson(FileName, save)
   if writefile then
     local json = HttpService:JSONEncode(save)
-    writefile(FolderName, json)
+    writefile(FileName, json)
   end
 end
 
@@ -442,9 +439,6 @@ function redzlib:MakeWindow(Configs)
   
   local LastTick = tick()
   local function SaveFile(Name, Value)
-    if makefolder and isfolder then
-      if not isfolder(Name) then makefolder(Name) end
-    end
     if writefile then
       if SaveCfg and type(SaveCfg) == "string" then
         Flags[Name] = Value
