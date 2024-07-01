@@ -48,8 +48,7 @@ local redzlib = {
     }
   },
   Info = {
-    Version = "1.0.2",
-    PlaceName = MarketplaceService:GetProductInfo(game.PlaceId).Name
+    Version = "1.0.2"
   },
   Save = {
     UISize = {550, 380},
