@@ -48,7 +48,7 @@ local redzlib = {
     }
   },
   Info = {
-    Version = "1.0.2"
+    Version = "1.0.3"
   },
   Save = {
     UISize = {550, 380},
@@ -124,11 +124,7 @@ local SetProps, SetChildren, InsertTheme, Create do
     end
   end
   
-  local success, debug = pcall(Save, "redz library V5.lua")
-  
-  if not success then
-    warn(debug)
-  end
+  pcall(Save, "redz library V5.lua")
 end
 
 local ScreenGui = Create("ScreenGui", CoreGui, {
@@ -431,36 +427,37 @@ function redzlib:MakeWindow(Configs)
   local WTitle = Configs[1] or Configs.Name or Configs.Title or "redz Library V5"
   local WMiniText = Configs[2] or Configs.SubTitle or "by : redz9999"
   local SaveCfg = Configs[3] or Configs.SaveFolder or false
-  local SaveRejoin = Configs[4] or Configs.SaveRejoin or false
   local Flags = redzlib.Flags
   
-  if SaveCfg and type(SaveCfg) == "string" then SaveCfg = string.gsub(SaveCfg, "/", "|")end
+  if type(SaveCfg) == "string" then SaveCfg = string.gsub(SaveCfg, "/", "|")end
   
-  local LastTick = tick()
-  local function SaveFile(Name, Value)
-    if writefile then
-      if SaveCfg and type(SaveCfg) == "string" then
-        Flags[Name] = Value
-        
-        local encode = HttpService:JSONEncode(Flags)
-        
-        pcall(writefile, SaveCfg, encode)
-      end
+  local function CheckFlag(Name)
+    return type(Name) == "string" and Flags[Name] ~= nil
+  end
+  
+  local function GetFlag(Name)
+    return type(Name) == "string" and Flags[Name]
+  end
+  
+  local function SetFlag(Name, Value)
+    if writefile and type(SaveCfg) == "string" and type(Name) == "string" then
+      Flags[Name] = Value
+      
+      local Encode = HttpService:JSONEncode(Flags)
+      pcall(writefile, SaveCfg, Encode)
     end
   end
   
   local function LoadFile()
-    if SaveCfg and type(SaveCfg) == "string" then
-      if readfile and isfile and isfile(SaveCfg) then
-        local success, Src = pcall(readfile, SaveCfg)
-        
-        if success and type(Src) == "string" then
-          Src = HttpService:JSONDecode(Src)
-          
-          if type(Src) == "table" then
-            Flags = Src
-          end
-        end
+    if not readfile or not isfile then return end
+    local s, r = pcall(isfile, SaveCfg)
+    
+    if s and r then
+      local s, _Flags = pcall(readfile, SaveCfg)
+      
+      if s and type(_Flags) == "string" then
+        local s,r = pcall(function() return HttpService:JSONDecode(_Flags) end)
+        Flags = s and r or {}
       end
     end
   end;LoadFile()
@@ -471,7 +468,8 @@ function redzlib:MakeWindow(Configs)
     Position = UDim2.new(0.5, -UISizeX/2, 0.5, -UISizeY/2),
     BackgroundTransparency = 0.03,
     Name = "Hub"
-  }), "Main")Make("Gradient", MainFrame, {
+  }), "Main")
+  Make("Gradient", MainFrame, {
     Rotation = 45
   })MakeDrag(MainFrame)
   
@@ -807,6 +805,8 @@ function redzlib:MakeWindow(Configs)
       end
     end
   end
+  
+  local ContainerList = {}
   function Window:MakeTab(paste, Configs)
     if type(paste) == "table" then Configs = paste end
     local TName = Configs[1] or Configs.Title or "Tab!"
@@ -851,7 +851,7 @@ function redzlib:MakeWindow(Configs)
       BackgroundTransparency = FirstTab and 1 or 0
     }), "Theme")Make("Corner", Selected, UDim.new(0.5, 0))
     
-    local Container = InsertTheme(Create("ScrollingFrame", Containers, {
+    local Container = InsertTheme(Create("ScrollingFrame", {
       Size = UDim2.new(1, 0, 1, 0),
       Position = UDim2.new(0, 0, 1),
       AnchorPoint = Vector2.new(0, 1),
@@ -863,8 +863,7 @@ function redzlib:MakeWindow(Configs)
       ScrollingDirection = "Y",
       BorderSizePixel = 0,
       CanvasSize = UDim2.new(),
-      Visible = not FirstTab,
-      Name = "Container"
+      Name = ("Container %i [ %s ]"):format(#ContainerList + 1, TName)
     }, {
       Create("UIPadding", {
         PaddingLeft = UDim.new(0, 10),
@@ -876,15 +875,19 @@ function redzlib:MakeWindow(Configs)
       })
     }), "ScrollBar")
     
+    table.insert(ContainerList, Container)
+    
+    if not FirstTab then Container.Parent = Containers end
+    
     local function Tabs()
-      if Container.Visible then return end
-      for _,Frame in pairs(Containers:GetChildren()) do
+      if Container.Parent then return end
+      for _,Frame in pairs(ContainerList) do
         if Frame:IsA("ScrollingFrame") and Frame ~= Container then
-          Frame.Visible = false
+          Frame.Parent = nil
         end
       end
+      Container.Parent = Containers
       Container.Size = UDim2.new(1, 0, 1, 150)
-      Container.Visible = true
       table.foreach(redzlib.Tabs, function(_,Tab)
         if Tab.Cont ~= Container then
           Tab.func:Disable()
@@ -904,7 +907,7 @@ function redzlib:MakeWindow(Configs)
     Tab.Cont = Container
     
     function Tab:Disable()
-      Container.Visible = false
+      Container.Parent = nil
       CreateTween({LabelTitle, "TextTransparency", 0.3, 0.35})
       CreateTween({LabelIcon, "ImageTransparency", 0.3, 0.35})
       CreateTween({Selected, "Size", UDim2.new(0, 4, 0, 4), 0.35})
@@ -914,8 +917,8 @@ function redzlib:MakeWindow(Configs)
       Tabs()
     end
     function Tab:Visible(Bool)
-      if Bool == nil then Container.Visible = not Container.Visible TabSelect.Visible = not TabSelect.Visible return end
-      Container.Visible = Bool
+      if Bool == nil then Container.Parent = not Container.Parent and Containers TabSelect.Visible = not TabSelect.Visible return end
+      Container.Parent = Bool and Containers
       TabSelect.Visible = Bool
     end
     function Tab:Destroy()
@@ -1040,9 +1043,11 @@ function redzlib:MakeWindow(Configs)
     function Tab:AddToggle(Configs)
       local TName = Configs[1] or Configs.Name or Configs.Title or "Toggle"
       local TDesc = Configs.Desc or Configs.Description or ""
-      local Default = Configs[2] or Configs.Default or false
       local Callback = Configs[3] or Configs.Callback or function()end
       local Flag = Configs[4] or Configs.Flag or false
+      local Default = Configs[2] or Configs.Default or false
+      if CheckFlag(Flag) then Default = GetFlag(Flag) end
+      
       local MultCallback = {}
       
       local Button, LabelFunc = ButtonFrame(Container, TName, TDesc, UDim2.new(1, -38))
@@ -1068,14 +1073,8 @@ function redzlib:MakeWindow(Configs)
         BackgroundColor3 = Theme["Color Theme"]
       }), "Theme")Make("Corner", Toggle, UDim.new(0.5, 0))
       
-      if Flag and type(Flag) == "string" and rawget(Flags, Flag) then
-        Default = Flags[Flag]
-      end
-      
       local function CallbackFunc()
-        if Flag and typeof(Flag) == "string" then
-          SaveFile(Flag, Default)
-        end
+        SetFlag(Flag, Default)
         task.spawn(Callback, Default)
         table.foreach(MultCallback, function(_,Val)
           if type(Val) == "function" then
@@ -1140,14 +1139,11 @@ function redzlib:MakeWindow(Configs)
       local DName = Configs[1] or Configs.Name or Configs.Title or "Dropdown"
       local DDesc = Configs.Desc or Configs.Description or ""
       local DOptions = Configs[2] or Configs.Options or {}
-      local DDefault = Configs[3] or Configs.Default or {}
       local Callback = Configs[4] or Configs.Callback or function()end
       local Flag = Configs[5] or Configs.Flag or false
+      local DDefault = Configs[3] or Configs.Default or {}
+      if CheckFlag(Flag) then DDefault = GetFlag(Flag) end
       local MultCallback = {}
-      
-      if Flag and type(Flag) == "string" and rawget(Flags, Flag) then
-        DDefault = Flags[Flag]
-      end
       
       local Button, LabelFunc = ButtonFrame(Container, DName, DDesc, UDim2.new(1, -180))
       
@@ -1316,9 +1312,7 @@ function redzlib:MakeWindow(Configs)
         }), "Text")
         
         local function CallbackFunc()
-          if Flag and typeof(Flag) == "string" then
-            SaveFile(Flag, Selected[1])
-          end
+          SetFlag(Flag, Selected[1])
           task.spawn(Callback, Selected[1])
           table.foreach(MultCallback, function(_,func)
             if type(func) == "function" then
@@ -1464,15 +1458,12 @@ function redzlib:MakeWindow(Configs)
       local Min = Configs[2] or Configs.MinValue or Configs.Min or 10
       local Max = Configs[3] or Configs.MaxValue or Configs.Max or 100
       local Increase = Configs[4] or Configs.Increase or 1
-      local Default = Configs[5] or Configs.Default or 25
       local Callback = Configs[6] or Configs.Callback or function()end
       local Flag = Configs[7] or Configs.Flag or false
+      local Default = Configs[5] or Configs.Default or 25
+      if CheckFlag(Flag) then Default = GetFlag(Flag) end
       local MultCallback = {}
       Min, Max = Min / Increase, Max / Increase
-      
-      if Flag and type(Flag) == "string" and rawget(Flags, Flag) then
-        Default = Flags[Flag]
-      end
       
       local Button, LabelFunc = ButtonFrame(Container, SName, SDesc, UDim2.new(1, -180))
       
@@ -1523,12 +1514,6 @@ function redzlib:MakeWindow(Configs)
         Visible = false
       })
       
-      local function SaveSlider()
-        if Flag and typeof(Flag) == "string" then
-          SaveFile(Flag, Default)
-        end
-      end
-      
       local function UpdateLabel(NewValue)
         local Number = tonumber(NewValue * Increase)
         Number = math.floor(Number * 100) / 100
@@ -1558,7 +1543,7 @@ function redzlib:MakeWindow(Configs)
         end)
         CreateTween({SliderIcon, "Transparency", 0.2, 0.3})
         Container.ScrollingEnabled = true
-        SaveSlider()
+        SetFlag(Flag, Default)
       end)
       
       LabelVal:GetPropertyChangedSignal("Text"):Connect(function()
@@ -1577,12 +1562,14 @@ function redzlib:MakeWindow(Configs)
       end)
       
 			function SetSlider(NewValue)
+			  if type(NewValue) ~= "number" then return end
+			  
         local Min, Max = Min * Increase, Max * Increase
         
         local SliderPos = (NewValue - Min) / (Max - Min)
         
-        CreateTween({SliderIcon, "Position", UDim2.fromScale(math.clamp(SliderPos, 0, 1), 0.5), 0.3, true})
-        SaveSlider()
+        SetFlag(Flag, NewValue)
+        CreateTween({ SliderIcon, "Position", UDim2.fromScale(math.clamp(SliderPos, 0, 1), 0.5), 0.3, true })
 			end;SetSlider(Default)
 			
 			local Slider = {}
