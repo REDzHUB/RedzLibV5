@@ -141,6 +141,13 @@ if ScreenFind and ScreenFind ~= ScreenGui then
   ScreenFind:Destroy()
 end
 
+local function GetStr(val)
+  if type(val) == "function" then
+    return val()
+  end
+  return val
+end
+
 local function ConnectSave(Instance, func)
   Instance.InputBegan:Connect(function(Input)
     if Input.UserInputType == Enum.UserInputType.MouseButton1 or Input.UserInputType == Enum.UserInputType.Touch then
@@ -956,9 +963,10 @@ function redzlib:MakeWindow(Configs)
       function Section:Destroy()
         SectionFrame:Destroy()
       end
-      function Section:Set(NewName)
-        if type(NewName) ~= "string" then return end
-        SectionLabel.Text = NewName
+      function Section:Set(New)
+        if New then
+          SectionLabel.Text = GetStr(New)
+        end
       end
       return Section
     end
@@ -970,17 +978,17 @@ function redzlib:MakeWindow(Configs)
       
       local Paragraph = {}
       function Paragraph:SetTitle(Val)
-        LabelFunc:SetTitle(Val)
+        LabelFunc:SetTitle(GetStr(Val))
       end
       function Paragraph:SetDesc(Val)
-        LabelFunc:SetDesc(Val)
+        LabelFunc:SetDesc(GetStr(Val))
       end
       function Paragraph:Set(Val1, Val2)
-        if type(Val1) == "string" and type(Val2) == "string" then
-          LabelFunc:SetTitle(Val1)
-          LabelFunc:SetDesc(Val2)
-        else
-          LabelFunc:SetDesc(Val1)
+        if Val1 and Val2 then
+          LabelFunc:SetTitle(GetStr(Val1))
+          LabelFunc:SetDesc(GetStr(Val2))
+        elseif Val1 then
+          LabelFunc:SetDesc(GetStr(Val1))
         end
       end
       function Paragraph:Visible(Bool)
