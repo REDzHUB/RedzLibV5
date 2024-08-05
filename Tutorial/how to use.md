@@ -71,6 +71,19 @@ Paragraph:Set("New Title", "New Text") -- string, string
 
 -- Set Only Text
 Paragraph:Set("New Text") -- string
+
+Paragraph:SetTitle("New Title") -- string
+Paragraph:SetDesc("New Text") -- string
+
+-- set using function
+Paragraph:Set(function()
+  if 1 + 1 == 2 then
+    return "New Text 1"
+  elseif game.PlaceId == game.PlaceId then
+    return "New Text 2"
+  end
+  return "New Text 3"
+end)
 ```
 
 ## Set Button
