@@ -1612,7 +1612,7 @@ function redzlib:MakeWindow(Configs)
       local TDefault = Configs[2] or Configs.Default or ""
       local TPlaceholderText = Configs.PlaceholderText or "Input"
       local TClearText = Configs[3] or Configs.ClearText or false
-      local Callback = Configs[2] or Configs.Callback or function()end
+      local Callback = Configs[4] or Configs.Callback or function()end
       local MultCallback = {}
       
       if type(TDefault) ~= "string" or TDefault:gsub(" ", ""):len() < 1 then
