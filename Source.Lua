@@ -142,7 +142,9 @@ local Funcs = {} do
   
   function Funcs:FireCallback(tab, ...)
     for _,v in ipairs(tab) do
-      task.spawn(v, ...)
+      if type(v) == "function" then
+        task.spawn(v, ...)
+      end
     end
   end
   
@@ -183,7 +185,7 @@ local Funcs = {} do
     if type(func) == "table" then
       return ({function(Value) func[1][func[2]] = Value end})
     end
-    return {type(func) == "function" and func}
+    return {func}
   end
 end
 
