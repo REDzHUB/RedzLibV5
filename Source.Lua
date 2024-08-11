@@ -141,7 +141,9 @@ local Funcs = {} do
   end
   
   function Funcs:FireCallback(tab, ...)
-    for _,v in ipairs(tab) do task.spawn(v, ...) end
+    for _,v in ipairs(tab) do
+      task.spawn(v, ...)
+    end
   end
   
   function Funcs:ToggleVisible(Obj, Bool)
@@ -179,11 +181,9 @@ local Funcs = {} do
     local func = Configs[index] or Configs.Callback or function()end
     
     if type(func) == "table" then
-      return ({function()
-        func[1][func[2]] = not func[1][func[2]]
-      end})
+      return ({function(Value) func[1][func[2]] = Value end})
     end
-    return {func}
+    return {type(func) == "function" and func}
   end
 end
 
