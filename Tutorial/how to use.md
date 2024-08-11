@@ -3,7 +3,7 @@
 ```lua
 -- Destroy Tab :
 
-local Tab = Window:MakeTab({Title = "Main", Icon = "Home"})
+local Tab = Window:MakeTab({ Title = "Main", Icon = "Home" })
 
 Tab:Destroy()
 
@@ -119,4 +119,58 @@ Toggle:Set(false) -- boolean
 Toggle:Set(function(Value)
   print(Value)
 end) -- function
+```
+
+## TextBox Changing
+```lua
+local TextBox = Tab:AddTextBox({
+  Name = "Textbox",
+  Description = "Walk Speed", 
+  PlaceholderText = "Number: 25/100",
+  Callback = function(Value)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+  end
+})
+
+TextBox.OnChanging = function(Text)
+  local Number = tonumber(Text)
+  if Number then
+    -- Clamps the number between 25 and 100
+    return math.clamp(Number, 25, 100)
+  end
+  -- Defaults to 25 if the input is not a valid number
+  return 25
+end
+
+-- Other Example
+
+local TextList = {"text1", "text2", "text3"} -- List of predefined texts
+
+TextBox.OnChanging = function(Text)
+  local ftext = table.find(TextList, Text:lower()) -- Finds the input text in the list, ignoring case
+  if ftext then
+    -- Returns a message indicating the text was found, along with its position in the list
+    return "text found: " .. ftext
+  end
+  -- Returns a message indicating the text was not found in the list
+  return "text not found"
+end
+```
+
+## Multi Dropdown
+```lua
+local Dropdown = Tab2:AddDropdown({
+  Name = "Players List",
+  Description = "Select a random Number",
+  Options = {"One", "Two", "Three", "Four", "Five"},
+  Default = {"Two", "Four"},
+  Flag = "Dropdown Teste 2",
+  MultiSelect = true
+})
+
+Dropdown:Callback(function(Values) -- table
+  print(Values, Values.One) -- table, boolean
+  warn(" ------ ")
+  table.foreach(Values, print)
+end)
 ```
