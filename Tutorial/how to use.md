@@ -171,6 +171,6 @@ local Dropdown = Tab2:AddDropdown({
 Dropdown:Callback(function(Values) -- table
   print(Values, Values.One) -- table, boolean
   warn(" ------ ")
-  table.foreach(Values, print)
+  table.foreach(Values, print) -- string, boolean
 end)
 ```
