@@ -531,7 +531,7 @@ function redzlib:GetIcon(index)
 	local firstMatch = nil
 	index = string.lower(index):gsub("lucide", ""):gsub("-", "")
 	
-	for Name, Icon in pairs(redzLib.lucide_icons) do
+	for Name, Icon in self.Icons do
 		Name = Name:gsub("lucide", ""):gsub("-", "")
 		if Name == index then
 			return Icon
